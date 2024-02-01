@@ -4,6 +4,8 @@ let ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
+document.documentElement.requestFullscreen();
+
 let touchStartX = 0;
 let touchEndX = 0;
 let isSwipe = false;
