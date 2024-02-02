@@ -3,15 +3,38 @@ let canvas = document.getElementById('canvas');
 let ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
-canvas.style.backgroundColor = 'green'; // Set canvas background color
+canvas.style.backgroundColor = 'gray'; // Set canvas background color
 canvas.style.margin = '0';
 canvas.style.padding = '0';
+canvas.style.display = 'none';
 
 let touchStartX = 0;
 let touchEndX = 0;
 let isSwipe = false;
 let gameActive = false;
+let gameFinished = false;
 let ballColor = 'black';
+
+const buttonStart = document.getElementById('fullScreen');
+buttonStart.style.display = 'block';
+
+function handleButtonClick() {
+    const start = document.getElementById('startScreen');
+
+    canvas.style.display = 'block';
+
+    buttonStart.style.display = 'none';
+    start.style.display = 'none';
+
+    enterFullscreen();
+
+    gameActive = true;
+
+    // Start the game loop
+    setInterval(updateGame, 16); // Adjust the interval as needed
+}
+
+buttonStart.addEventListener('click', handleButtonClick);
 
 // Ball
 const ball = {
@@ -21,11 +44,18 @@ const ball = {
     color: ballColor
 };
 
+const goal = {
+    x: canvas.width - 40, // Adjust the x-coordinate as needed
+    y: 0,                 // Adjust the y-coordinate as needed
+    width: 40,            // Adjust the width as needed
+    height: canvas.height, // Adjust the height as needed
+    checkerSize: 10  
+}
+
 function drawBall(ball) {
-    // Create a radial gradient for a glowing effect
     let gradient = ctx.createRadialGradient(ball.x, ball.y, 0, ball.x, ball.y, ball.radius);
-    gradient.addColorStop(0, 'rgba(192, 192, 192, 1)'); // Silver color
-    gradient.addColorStop(1, 'rgba(255, 255, 255, 1)'); // Transparent outer color
+    gradient.addColorStop(0, 'rgba(192, 192, 192, 1)'); 
+    gradient.addColorStop(1, 'rgba(255, 255, 255, 1)');
 
     ctx.beginPath();
     ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
@@ -40,6 +70,24 @@ function updateBall() {
     ball.color = ballColor;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawBall(ball);
+}
+
+function drawGoal() {
+    ctx.fillStyle = 'white';
+
+    // Draw red and white checkers
+    for (let i = goal.y; i < goal.height; i += goal.checkerSize * 2) {
+        ctx.fillRect(goal.x, i, goal.width, goal.checkerSize);
+        ctx.clearRect(goal.x, i + goal.checkerSize, goal.width, goal.checkerSize);
+    }
+}
+
+function updateGame() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    drawBall(ball);
+
+    drawGoal();
 }
 
 // Landscape phone
@@ -61,7 +109,7 @@ function enterFullscreen() {
 }
 
 function handleDeviceMotion(event) {
-    if (gameActive) {
+    if (gameActive && !gameFinished) {
         // Swap X and Y acceleration for landscape orientation
         const accelerationX = isLandscape() ? event.accelerationIncludingGravity.y : event.accelerationIncludingGravity.x;
         const accelerationY = isLandscape() ? -event.accelerationIncludingGravity.x : event.accelerationIncludingGravity.y;
@@ -76,6 +124,12 @@ function handleDeviceMotion(event) {
         }
         if (ball.x - ball.radius > canvas.width) {
             ball.x = canvas.width + ball.radius;
+
+            // Ball crossed the finish line
+            gameFinished = true;
+
+            // Display game completion message
+            alert("Leik lokið!");
         }
         if (ball.y + ball.radius < 0) {
             ball.y = ball.radius;
@@ -87,7 +141,6 @@ function handleDeviceMotion(event) {
         updateBall();
     }
 }
-
 
 window.addEventListener('devicemotion', handleDeviceMotion);
 
