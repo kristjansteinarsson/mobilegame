@@ -146,7 +146,9 @@ function updateGame(timestamp) {
                 ball.y = canvas.height / 2;
                 
                 // Perform small vibration on the phone (you may need to adjust this)
-                navigator.vibrate([100, 30, 100]);
+                if ('vibrate' in navigator) {
+                    navigator.vibrate([100, 30, 100]);
+                }
 
                 // You can add more effects or actions here
             }
