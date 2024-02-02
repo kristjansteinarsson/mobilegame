@@ -8,6 +8,7 @@ canvas.style.margin = '0';
 canvas.style.padding = '0';
 canvas.style.display = 'none';
 
+let lastTimestamp = 0;
 let touchStartX = 0;
 let touchEndX = 0;
 let isSwipe = false;
@@ -127,28 +128,41 @@ for (let i = 0; i < 6; i++) {
     holes.push(new Hole());
 }
 
-function updateGame() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+function updateGame(timestamp) {
+    const deltaTime = timestamp - lastTimestamp;
 
-    drawBall(ball);
+    // Only clear the canvas if a sufficient amount of time has passed
+    if (deltaTime > 16) { // Adjust this threshold as needed
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    holes.forEach(hole => {
-        hole.draw();
+        drawBall(ball);
 
-        if (hole.checkCollision()) {
-            // Ball touched a hole
-            ball.x = 100; // Reset ball position
-            ball.y = canvas.height / 2;
-            
-            // Perform small vibration on the phone (you may need to adjust this)
-            navigator.vibrate([100, 30, 100]);
+        holes.forEach(hole => {
+            hole.draw();
 
-            // You can add more effects or actions here
-        }
-    });
+            if (hole.checkCollision()) {
+                // Ball touched a hole
+                ball.x = 100; // Reset ball position
+                ball.y = canvas.height / 2;
+                
+                // Perform small vibration on the phone (you may need to adjust this)
+                navigator.vibrate([100, 30, 100]);
 
-    drawGoal();
+                // You can add more effects or actions here
+            }
+        });
+
+        drawGoal();
+
+        lastTimestamp = timestamp;
+    }
+
+    // Call requestAnimationFrame to continue the animation loop
+    requestAnimationFrame(updateGame);
 }
+
+// Start the game loop
+requestAnimationFrame(updateGame);
 
 // Landscape phone
 function isLandscape() {
