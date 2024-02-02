@@ -62,8 +62,9 @@ function enterFullscreen() {
 
 function handleDeviceMotion(event) {
     if (gameActive) {
-        const accelerationX = event.accelerationIncludingGravity.x;
-        const accelerationY = event.accelerationIncludingGravity.y;
+        // Swap X and Y acceleration for landscape orientation
+        const accelerationX = isLandscape() ? event.accelerationIncludingGravity.y : event.accelerationIncludingGravity.x;
+        const accelerationY = isLandscape() ? -event.accelerationIncludingGravity.x : event.accelerationIncludingGravity.y;
 
         // Adjust the ball's position based on device acceleration
         ball.x += accelerationX;
@@ -86,6 +87,7 @@ function handleDeviceMotion(event) {
         updateBall();
     }
 }
+
 
 window.addEventListener('devicemotion', handleDeviceMotion);
 
