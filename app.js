@@ -68,7 +68,7 @@ function handleDeviceMotion(event) {
 
         // Adjust the ball's position based on device acceleration
         ball.x += accelerationX;
-        ball.y += accelerationY;
+        ball.y -= accelerationY;
 
         // Ensure the ball stays within the canvas boundaries
         if (ball.x + ball.radius < 0) {
