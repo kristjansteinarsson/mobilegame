@@ -76,16 +76,76 @@ function drawGoal() {
     ctx.fillStyle = 'white';
 
     // Draw red and white checkers
-    for (let i = goal.y; i < goal.height; i += goal.checkerSize * 2) {
+    for (let i = goal.y; i < goal.height; i += goal.checkerSize * 1.5) {
         ctx.fillRect(goal.x, i, goal.width, goal.checkerSize);
         ctx.clearRect(goal.x, i + goal.checkerSize, goal.width, goal.checkerSize);
     }
+}
+
+class Hole {
+    constructor() {
+        this.radius = ball.radius + 5; // Slightly bigger than the ball
+
+        // Define a safe zone around the starting position
+        const safeZoneRadius = 100;
+        const safeZoneX = ball.x - safeZoneRadius;
+        const safeZoneY = ball.y - safeZoneRadius;
+
+        // Generate random coordinates outside the safe zone
+        do {
+            this.x = Math.random() * (canvas.width - this.radius * 2) + this.radius;
+            this.y = Math.random() * (canvas.height - this.radius * 2) + this.radius;
+        } while (
+            this.x > safeZoneX &&
+            this.x < safeZoneX + safeZoneRadius * 2 &&
+            this.y > safeZoneY &&
+            this.y < safeZoneY + safeZoneRadius * 2
+        );
+
+        this.color = 'black';
+    }
+
+    draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.fillStyle = this.color;
+        ctx.fill();
+        ctx.closePath();
+    }
+
+    checkCollision() {
+        const distance = Math.sqrt((ball.x - this.x) ** 2 + (ball.y - this.y) ** 2);
+        return distance < this.radius + ball.radius;
+    }
+}
+
+// Array to store holes
+const holes = [];
+
+// Create 4 random holes
+for (let i = 0; i < 6; i++) {
+    holes.push(new Hole());
 }
 
 function updateGame() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     drawBall(ball);
+
+    holes.forEach(hole => {
+        hole.draw();
+
+        if (hole.checkCollision()) {
+            // Ball touched a hole
+            ball.x = 100; // Reset ball position
+            ball.y = canvas.height / 2;
+            
+            // Perform small vibration on the phone (you may need to adjust this)
+            navigator.vibrate([100, 30, 100]);
+
+            // You can add more effects or actions here
+        }
+    });
 
     drawGoal();
 }
