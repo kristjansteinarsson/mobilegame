@@ -145,12 +145,9 @@ function updateGame(timestamp) {
                 ball.x = 100; // Reset ball position
                 ball.y = canvas.height / 2;
                 
-                // Perform small vibration on the phone (you may need to adjust this)
-                if ('vibrate' in navigator) {
-                    navigator.vibrate([100, 30, 100]);
-                }
+                
+                navigator.vibrate(200);
 
-                // You can add more effects or actions here
             }
         });
 
@@ -176,7 +173,7 @@ function enterFullscreen() {
     if (canvas.requestFullscreen) {
         canvas.requestFullscreen();
     } else if (canvas.mozRequestFullScreen) {
-        canvas.mozRequestFullScreen();
+        canvas.mozRequestFullScreen(); 
     } else if (canvas.webkitRequestFullscreen) {
         canvas.webkitRequestFullscreen();
     } else if (canvas.msRequestFullscreen) {
