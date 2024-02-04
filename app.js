@@ -207,6 +207,7 @@ function handleDeviceMotion(event) {
             }
 
             gameOver.style.display = 'block';
+            document.body.appendChild(gameOver);
 
         }
         if (ball.y + ball.radius < 0) {
