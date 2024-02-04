@@ -15,6 +15,7 @@ let isSwipe = false;
 let gameActive = false;
 let gameFinished = false;
 let ballColor = 'black';
+
 const winSound = new Audio('win.mp3');
 
 const buttonStart = document.getElementById('fullScreen');
@@ -31,6 +32,8 @@ function handleButtonClick() {
     enterFullscreen();
 
     gameActive = true;
+
+    winSound.load();
 
     // Start the game loop
     setInterval(updateGame, 16); // Adjust the interval as needed
@@ -193,10 +196,14 @@ function handleDeviceMotion(event) {
 
             gameFinished = true;
 
-            winSound.play();
-
             alert("Leik lokið!");
-            audio
+            if (winSound.paused) {
+                winSound.play().then(() => {
+                    console.log('Audio played successfully');
+                }).catch(error => {
+                    console.error('Error playing audio:', error.message);
+                });
+            }
         }
         if (ball.y + ball.radius < 0) {
             ball.y = ball.radius;
