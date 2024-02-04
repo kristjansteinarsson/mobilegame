@@ -27,7 +27,6 @@ function handleButtonClick() {
     const start = document.getElementById('startScreen');
 
     canvas.style.display = 'block';
-
     buttonStart.style.display = 'none';
     start.style.display = 'none';
 
@@ -162,17 +161,21 @@ function isLandscape() {
     return window.innerWidth > window.innerHeight;
 }
 
-function enterFullscreen() {
-    if (canvas.requestFullscreen) {
-        canvas.requestFullscreen();
-    } else if (canvas.mozRequestFullScreen) {
-        canvas.mozRequestFullScreen();
-    } else if (canvas.webkitRequestFullscreen) {
-        canvas.webkitRequestFullscreen();
-    } else if (canvas.msRequestFullscreen) {
-        canvas.msRequestFullscreen();
+function lockLandscapeOrientation() {
+    if (screen.orientation && screen.orientation.lock) {
+        screen.orientation.lock('landscape');
+    } else if (screen.lockOrientation) {
+        screen.lockOrientation('landscape');
+    } else if (screen.mozLockOrientation) {
+        screen.mozLockOrientation('landscape');
+    } else if (screen.msLockOrientation) {
+        screen.msLockOrientation('landscape');
     }
 }
+
+// Call the function to lock landscape orientation when the page loads
+window.addEventListener('load', lockLandscapeOrientation);
+
 
 function handleDeviceMotion(event) {
     if (gameActive && !gameFinished) {
