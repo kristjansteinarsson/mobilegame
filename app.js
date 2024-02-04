@@ -196,7 +196,6 @@ function handleDeviceMotion(event) {
 
             gameFinished = true;
 
-            alert("Leik lokið!");
             if (winSound.paused) {
                 winSound.play().then(() => {
                     console.log('Audio played successfully');
@@ -204,6 +203,8 @@ function handleDeviceMotion(event) {
                     console.error('Error playing audio:', error.message);
                 });
             }
+            alert("Leik lokið!");
+
         }
         if (ball.y + ball.radius < 0) {
             ball.y = ball.radius;
