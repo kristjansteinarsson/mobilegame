@@ -3,7 +3,7 @@ let canvas = document.getElementById('canvas');
 let ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
-canvas.style.backgroundColor = 'gray'; // Set canvas background color
+canvas.style.backgroundColor = 'pink';
 canvas.style.margin = '0';
 canvas.style.padding = '0';
 canvas.style.display = 'none';
@@ -94,8 +94,8 @@ class Hole {
 
         // Generate random coordinates outside the safe zone
         do {
-            this.x = Math.random() * (canvas.width - this.radius * 2) + this.radius;
-            this.y = Math.random() * (canvas.height - this.radius * 2) + this.radius;
+            this.x = Math.random() * (canvas.width - this.radius) + this.radius;
+            this.y = Math.random() * (canvas.height - this.radius) + this.radius;
         } while (
             this.x > safeZoneX &&
             this.x < safeZoneX + safeZoneRadius * 2 &&
@@ -103,7 +103,7 @@ class Hole {
             this.y < safeZoneY + safeZoneRadius * 2
         );
 
-        this.color = 'black';
+        this.color = 'lightyellow';
     }
 
     draw() {
@@ -124,15 +124,14 @@ class Hole {
 const holes = [];
 
 // Create 4 random holes
-for (let i = 0; i < 6; i++) {
+for (let i = 0; i < 10; i++) {
     holes.push(new Hole());
 }
 
 function updateGame(timestamp) {
     const deltaTime = timestamp - lastTimestamp;
 
-    // Only clear the canvas if a sufficient amount of time has passed
-    if (deltaTime > 16) { // Adjust this threshold as needed
+    if (deltaTime > 16) { 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         drawBall(ball);
@@ -140,13 +139,13 @@ function updateGame(timestamp) {
         holes.forEach(hole => {
             hole.draw();
 
-            if (hole.checkCollision()) {
-                // Ball touched a hole
-                ball.x = 100; // Reset ball position
+            if (hole.checkCollision() && !gameFinished) {
+                ball.x = 100; 
                 ball.y = canvas.height / 2;
-                
+
                 navigator.vibrate(200);
 
+                gameFinished = true;
             }
         });
 
@@ -155,10 +154,8 @@ function updateGame(timestamp) {
         lastTimestamp = timestamp;
     }
 
-    // Call requestAnimationFrame to continue the animation loop
     requestAnimationFrame(updateGame);
 }
-
 // Start the game loop
 requestAnimationFrame(updateGame);
 
