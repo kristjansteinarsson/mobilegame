@@ -15,6 +15,7 @@ let isSwipe = false;
 let gameActive = false;
 let gameFinished = false;
 let ballColor = 'black';
+const winSound = new Audio('win.mp3');
 
 const buttonStart = document.getElementById('fullScreen');
 buttonStart.style.display = 'block';
@@ -131,8 +132,7 @@ for (let i = 0; i < 6; i++) {
 function updateGame(timestamp) {
     const deltaTime = timestamp - lastTimestamp;
 
-    // Only clear the canvas if a sufficient amount of time has passed
-    if (deltaTime > 16) { // Adjust this threshold as needed
+    if (deltaTime > 16) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         drawBall(ball);
@@ -141,14 +141,10 @@ function updateGame(timestamp) {
             hole.draw();
 
             if (hole.checkCollision()) {
-                // Ball touched a hole
-                ball.x = 100; // Reset ball position
+                ball.x = 100;
                 ball.y = canvas.height / 2;
                 
                 navigator.vibrate(200);
-                
-
-                // You can add more effects or actions here
             }
         });
 
@@ -157,7 +153,6 @@ function updateGame(timestamp) {
         lastTimestamp = timestamp;
     }
 
-    // Call requestAnimationFrame to continue the animation loop
     requestAnimationFrame(updateGame);
 }
 
@@ -184,26 +179,24 @@ function enterFullscreen() {
 
 function handleDeviceMotion(event) {
     if (gameActive && !gameFinished) {
-        // Swap X and Y acceleration for landscape orientation
         const accelerationX = isLandscape() ? event.accelerationIncludingGravity.y : event.accelerationIncludingGravity.x;
         const accelerationY = isLandscape() ? -event.accelerationIncludingGravity.x : event.accelerationIncludingGravity.y;
 
-        // Adjust the ball's position based on device acceleration
         ball.x += accelerationX;
         ball.y -= accelerationY;
 
-        // Ensure the ball stays within the canvas boundaries
         if (ball.x + ball.radius < 0) {
             ball.x = ball.radius;
         }
         if (ball.x - ball.radius > canvas.width) {
             ball.x = canvas.width + ball.radius;
 
-            // Ball crossed the finish line
             gameFinished = true;
 
-            // Display game completion message
+            winSound.play();
+
             alert("Leik lokið!");
+            audio
         }
         if (ball.y + ball.radius < 0) {
             ball.y = ball.radius;
