@@ -185,6 +185,8 @@ function handleDeviceMotion(event) {
         const accelerationX = isLandscape() ? event.accelerationIncludingGravity.y : event.accelerationIncludingGravity.x;
         const accelerationY = isLandscape() ? -event.accelerationIncludingGravity.x : event.accelerationIncludingGravity.y;
 
+        const gameOver = getElementById('gameOver');
+
         ball.x += accelerationX;
         ball.y -= accelerationY;
 
@@ -203,7 +205,9 @@ function handleDeviceMotion(event) {
                     console.error('Error playing audio:', error.message);
                 });
             }
-            alert("Leik lokið!");
+
+            gameOver.style.display = 'block';
+            
 
         }
         if (ball.y + ball.radius < 0) {
@@ -243,7 +247,7 @@ window.addEventListener('touchend', event => {
     if (isLandscape()) {
         if (isSwipe && swipeDistance > swipeThreshold) {
             start.style.display = 'none';
-            screen.style.display = 'body';
+            screen.style.display = 'block';
             document.body.appendChild(start);
             gameActive = true;
             enterFullscreen(); // Enter fullscreen mode
