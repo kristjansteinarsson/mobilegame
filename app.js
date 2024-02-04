@@ -15,19 +15,6 @@ let isSwipe = false;
 let gameActive = false;
 let gameFinished = false;
 let ballColor = 'black';
-let isVisible = true;
-let hasInteracted = false;
-
-document.addEventListener('visibilitychange', () => {
-    isVisible = !document.hidden;
-});
-
-document.addEventListener('click', () => {
-    if (!hasInteracted) {
-        winSound.load();
-        hasInteracted = true;
-    }
-});
 
 // Klára leik hljóð
 const winSound = new Audio('win.mp3');
@@ -206,17 +193,14 @@ function handleDeviceMotion(event) {
             gameFinished = true;
 
             if (winSound.paused) {
-                if (isVisible) {
                     winSound.play().then(() => {
                         console.log('Audio played successfully');
+                        alert("Leik lokið!");
                     }).catch(error => {
                         console.error('Error playing audio:', error.message);
                     });
                 }
             }
-
-            gameOver.style.display = 'block';
-            document.body.appendChild(gameOver);
         }
         if (ball.y + ball.radius < 0) {
             ball.y = ball.radius;
@@ -225,8 +209,7 @@ function handleDeviceMotion(event) {
             ball.y = canvas.height + ball.radius;
         }
 
-        updateBall();
-    }
+    updateBall();
 }
 
 window.addEventListener('devicemotion', handleDeviceMotion);
