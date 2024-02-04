@@ -3,7 +3,7 @@ let canvas = document.getElementById('canvas');
 let ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
-canvas.style.backgroundColor = 'pink';
+canvas.style.backgroundColor = 'pink'; // Set canvas background color
 canvas.style.margin = '0';
 canvas.style.padding = '0';
 canvas.style.display = 'none';
@@ -86,7 +86,6 @@ function drawGoal() {
 class Hole {
     constructor() {
         this.radius = ball.radius + 5; // Slightly bigger than the ball
-        this.hit = false; // New property to track hole hit status
 
         // Define a safe zone around the starting position
         const safeZoneRadius = 100;
@@ -101,11 +100,10 @@ class Hole {
             this.x > safeZoneX &&
             this.x < safeZoneX + safeZoneRadius * 2 &&
             this.y > safeZoneY &&
-            this.y < safeZoneY + safeZoneRadius * 2 &&
-            this.checkCollisionWithOtherHoles()
+            this.y < safeZoneY + safeZoneRadius * 2
         );
 
-        this.color = 'lightyellow';
+        this.color = 'black';
     }
 
     draw() {
@@ -120,54 +118,51 @@ class Hole {
         const distance = Math.sqrt((ball.x - this.x) ** 2 + (ball.y - this.y) ** 2);
         return distance < this.radius + ball.radius;
     }
-
-    checkCollisionWithOtherHoles() {
-        for (const otherHole of holes) {
-            if (otherHole !== this) {
-                const distance = Math.sqrt((otherHole.x - this.x) ** 2 + (otherHole.y - this.y) ** 2);
-                if (distance < this.radius + otherHole.radius) {
-                    return true; // Collision with other hole detected
-                }
-            }
-        }
-        return false; // No collision with other holes
-    }
 }
-
 
 // Array to store holes
 const holes = [];
 
 // Create 4 random holes
-for (let i = 0; i < 10; i++) {
+for (let i = 0; i < 6; i++) {
     holes.push(new Hole());
 }
 
 function updateGame(timestamp) {
     const deltaTime = timestamp - lastTimestamp;
 
-    if (deltaTime > 16) {
+    // Only clear the canvas if a sufficient amount of time has passed
+    if (deltaTime > 16) { // Adjust this threshold as needed
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        drawBall(ball);
 
         holes.forEach(hole => {
             hole.draw();
-            if (hole.checkCollision() && !gameFinished) {
-                if (!hole.hit) {
-                    // Ball touched a hole (trigger vibration)
-                    navigator.vibrate(200);
-                    hole.hit = true; // Mark the hole as hit to avoid repeated vibrations
+
+            if (hole.checkCollision()) {
+                // Ball touched a hole
+                ball.x = 100; // Reset ball position
+                ball.y = canvas.height / 2;
+                
+                // Perform small vibration on the phone (you may need to adjust this)
+                if ('vibrate' in navigator) {
+                    navigator.vibrate([100, 30, 100]);
                 }
+
+                // You can add more effects or actions here
             }
         });
 
-        drawBall(ball);
         drawGoal();
 
         lastTimestamp = timestamp;
     }
 
+    // Call requestAnimationFrame to continue the animation loop
     requestAnimationFrame(updateGame);
 }
+
 // Start the game loop
 requestAnimationFrame(updateGame);
 
@@ -181,7 +176,7 @@ function enterFullscreen() {
     if (canvas.requestFullscreen) {
         canvas.requestFullscreen();
     } else if (canvas.mozRequestFullScreen) {
-        canvas.mozRequestFullScreen(); 
+        canvas.mozRequestFullScreen();
     } else if (canvas.webkitRequestFullscreen) {
         canvas.webkitRequestFullscreen();
     } else if (canvas.msRequestFullscreen) {
@@ -191,7 +186,9 @@ function enterFullscreen() {
 
 function handleDeviceMotion(event) {
     if (gameActive && !gameFinished) {
-        // ... (unchanged)
+        // Swap X and Y acceleration for landscape orientation
+        const accelerationX = isLandscape() ? event.accelerationIncludingGravity.y : event.accelerationIncludingGravity.x;
+        const accelerationY = isLandscape() ? -event.accelerationIncludingGravity.x : event.accelerationIncludingGravity.y;
 
         // Adjust the ball's position based on device acceleration
         ball.x += accelerationX;
@@ -202,13 +199,19 @@ function handleDeviceMotion(event) {
             ball.x = ball.radius;
         }
         if (ball.x - ball.radius > canvas.width) {
-            ball.x = canvas.width - ball.radius;
+            ball.x = canvas.width + ball.radius;
+
+            // Ball crossed the finish line
+            gameFinished = true;
+
+            // Display game completion message
+            alert("Leik lokið!");
         }
         if (ball.y + ball.radius < 0) {
             ball.y = ball.radius;
         }
         if (ball.y - ball.radius > canvas.height) {
-            ball.y = canvas.height - ball.radius;
+            ball.y = canvas.height + ball.radius;
         }
 
         updateBall();
