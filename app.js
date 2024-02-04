@@ -145,7 +145,6 @@ function updateGame(timestamp) {
                 ball.x = 100; // Reset ball position
                 ball.y = canvas.height / 2;
                 
-                
                 navigator.vibrate(200);
 
             }
