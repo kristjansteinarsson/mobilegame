@@ -3,7 +3,7 @@ let canvas = document.getElementById('canvas');
 let ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
-canvas.style.backgroundColor = 'pink'; // Set canvas background color
+canvas.style.backgroundColor = 'grey'; // Set canvas background color
 canvas.style.margin = '0';
 canvas.style.padding = '0';
 canvas.style.display = 'none';
@@ -128,7 +128,7 @@ class Hole {
 const holes = [];
 
 // Create 4 random holes
-for (let i = 0; i < 10; i++) {
+for (let i = 0; i < 6; i++) {
     holes.push(new Hole());
 }
 
