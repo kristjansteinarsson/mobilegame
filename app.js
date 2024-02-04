@@ -3,7 +3,7 @@ let canvas = document.getElementById('canvas');
 let ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
-canvas.style.backgroundColor = 'pink'; // Set canvas background color
+canvas.style.backgroundColor = 'pink';
 canvas.style.margin = '0';
 canvas.style.padding = '0';
 canvas.style.display = 'none';
@@ -15,12 +15,19 @@ let isSwipe = false;
 let gameActive = false;
 let gameFinished = false;
 let ballColor = 'black';
+let isVisible = true;
 
+document.addEventListener('visibilitychange', () => {
+    isVisible = !document.hidden;
+});
+
+// Klára leik hljóð
 const winSound = new Audio('win.mp3');
 
 const buttonStart = document.getElementById('fullScreen');
 buttonStart.style.display = 'block';
 
+// Byrja leik takki
 function handleButtonClick() {
     const start = document.getElementById('startScreen');
 
@@ -35,13 +42,12 @@ function handleButtonClick() {
 
     winSound.load();
 
-    // Start the game loop
-    setInterval(updateGame, 16); // Adjust the interval as needed
+    setInterval(updateGame, 16); 
 }
 
 buttonStart.addEventListener('click', handleButtonClick);
 
-// Ball
+// Bolti
 const ball = {
     x: 100,
     y: canvas.height / 2,
@@ -50,10 +56,10 @@ const ball = {
 };
 
 const goal = {
-    x: canvas.width - 40, // Adjust the x-coordinate as needed
-    y: 0,                 // Adjust the y-coordinate as needed
-    width: 40,            // Adjust the width as needed
-    height: canvas.height, // Adjust the height as needed
+    x: canvas.width - 40,
+    y: 0,                
+    width: 40,            
+    height: canvas.height, 
     checkerSize: 10  
 }
 
@@ -65,8 +71,8 @@ function drawBall(ball) {
     ctx.beginPath();
     ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
     ctx.fillStyle = gradient;
-    ctx.shadowColor = 'rgba(0, 0, 0, 1)'; // Shadow color
-    ctx.shadowBlur = 10; // Shadow blur
+    ctx.shadowColor = 'rgba(0, 0, 0, 1)';
+    ctx.shadowBlur = 10;
     ctx.fill();
     ctx.closePath();
 }
@@ -80,23 +86,20 @@ function updateBall() {
 function drawGoal() {
     ctx.fillStyle = 'white';
 
-    // Draw red and white checkers
     for (let i = goal.y; i < goal.height; i += goal.checkerSize * 1.5) {
         ctx.fillRect(goal.x, i, goal.width, goal.checkerSize);
         ctx.clearRect(goal.x, i + goal.checkerSize, goal.width, goal.checkerSize);
     }
 }
 
+// Gerir holurnar
 class Hole {
     constructor() {
-        this.radius = ball.radius + 5; // Slightly bigger than the ball
-
-        // Define a safe zone around the starting position
+        this.radius = ball.radius + 5;
         const safeZoneRadius = 100;
         const safeZoneX = ball.x - safeZoneRadius;
         const safeZoneY = ball.y - safeZoneRadius;
 
-        // Generate random coordinates outside the safe zone
         do {
             this.x = Math.random() * (canvas.width - this.radius * 2) + this.radius;
             this.y = Math.random() * (canvas.height - this.radius * 2) + this.radius;
@@ -124,11 +127,10 @@ class Hole {
     }
 }
 
-// Array to store holes
 const holes = [];
 
-// Create 4 random holes
-for (let i = 0; i < 6; i++) {
+// Hversu margar holur '10'
+for (let i = 0; i < 10; i++) {
     holes.push(new Hole());
 }
 
@@ -159,15 +161,12 @@ function updateGame(timestamp) {
     requestAnimationFrame(updateGame);
 }
 
-// Start the game loop
 requestAnimationFrame(updateGame);
 
-// Landscape phone
 function isLandscape() {
     return window.innerWidth > window.innerHeight;
 }
 
-// Function to enter fullscreen
 function enterFullscreen() {
     if (canvas.requestFullscreen) {
         canvas.requestFullscreen();
@@ -223,7 +222,6 @@ function handleDeviceMotion(event) {
 
 window.addEventListener('devicemotion', handleDeviceMotion);
 
-// Touch events
 window.addEventListener('touchstart', event => {
     console.log('start');
     touchStartX = event.touches[0].clientX;
@@ -250,10 +248,10 @@ window.addEventListener('touchend', event => {
             screen.style.display = 'block';
             document.body.appendChild(start);
             gameActive = true;
-            enterFullscreen(); // Enter fullscreen mode
+            enterFullscreen();
             updateBall();
         }
     } else {
-        enterFullscreen(); // Enter fullscreen mode
+        enterFullscreen();
     }
 });
