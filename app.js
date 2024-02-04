@@ -16,9 +16,17 @@ let gameActive = false;
 let gameFinished = false;
 let ballColor = 'black';
 let isVisible = true;
+let hasInteracted = false;
 
 document.addEventListener('visibilitychange', () => {
     isVisible = !document.hidden;
+});
+
+document.addEventListener('click', () => {
+    if (!hasInteracted) {
+        winSound.load();
+        hasInteracted = true;
+    }
 });
 
 // Klára leik hljóð
@@ -198,16 +206,17 @@ function handleDeviceMotion(event) {
             gameFinished = true;
 
             if (winSound.paused) {
-                winSound.play().then(() => {
-                    console.log('Audio played successfully');
-                }).catch(error => {
-                    console.error('Error playing audio:', error.message);
-                });
+                if (isVisible) {
+                    winSound.play().then(() => {
+                        console.log('Audio played successfully');
+                    }).catch(error => {
+                        console.error('Error playing audio:', error.message);
+                    });
+                }
             }
 
             gameOver.style.display = 'block';
             document.body.appendChild(gameOver);
-
         }
         if (ball.y + ball.radius < 0) {
             ball.y = ball.radius;
