@@ -185,7 +185,7 @@ function handleDeviceMotion(event) {
         const accelerationX = isLandscape() ? event.accelerationIncludingGravity.y : event.accelerationIncludingGravity.x;
         const accelerationY = isLandscape() ? -event.accelerationIncludingGravity.x : event.accelerationIncludingGravity.y;
 
-        const gameOver = getElementById('gameOver');
+        const gameOver = document.getElementById('gameOver');
 
         ball.x += accelerationX;
         ball.y -= accelerationY;
