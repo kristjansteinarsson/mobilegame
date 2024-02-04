@@ -128,7 +128,7 @@ class Hole {
 const holes = [];
 
 // Create 4 random holes
-for (let i = 0; i < 6; i++) {
+for (let i = 0; i < 10; i++) {
     holes.push(new Hole());
 }
 
