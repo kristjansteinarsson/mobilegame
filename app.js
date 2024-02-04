@@ -144,8 +144,6 @@ function updateGame(timestamp) {
                 ball.y = canvas.height / 2;
 
                 navigator.vibrate(200);
-
-                gameFinished = true;
             }
         });
 
